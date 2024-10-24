@@ -8,9 +8,46 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
+import { useState } from "react"
+import type { Task, PriorityLevel } from '@/types'
+import { saveTasks, getTasks } from "@/utils/local-storage"
+
 
 function AddTaskButton() {
+  const [name, setName] = useState<string>("")
+  const [priority, setPriority] = useState<string>("low")
+  const [tasks, setTasks] = useState<Task[]>(getTasks())
+
+  const handleSubmit = () => {
+    const newTask: Task = {
+      id: crypto.randomUUID(),
+      title: name,
+      status: 'uncompleted',
+      priority: priority as PriorityLevel,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      tags: []
+    }
+
+    addTask(newTask)
+    console.log(tasks)
+  }
+
+  const addTask = (task: Task) => {
+    const updatedTasks = [...tasks, task]
+    setTasks(updatedTasks)
+    saveTasks(updatedTasks)
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -26,7 +63,22 @@ function AddTaskButton() {
               id="taskName"
               placeholder="Name your task"
               className="col-span-3"
+              onChange={e => setName(e.target.value)}
             />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Select onValueChange={setPriority}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Assign a priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter>
@@ -35,7 +87,7 @@ function AddTaskButton() {
               Cancel
             </Button>
           </DialogClose>
-          <Button type="submit">Save changes</Button>
+          <Button type="button" onClick={handleSubmit}>Save changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
