@@ -21,8 +21,11 @@ import { useState } from "react"
 import type { Task, PriorityLevel } from '@/types'
 import { saveTasks, getTasks } from "@/utils/local-storage"
 
+interface AddTaskButtonProps {
+  onTaskAdded: (newTask: Task) => void;
+}
 
-function AddTaskButton() {
+function AddTaskButton({ onTaskAdded }: AddTaskButtonProps) {
   const [name, setName] = useState<string>("")
   const [priority, setPriority] = useState<string>("low")
   const [tasks, setTasks] = useState<Task[]>(getTasks())
@@ -31,7 +34,7 @@ function AddTaskButton() {
     const newTask: Task = {
       id: crypto.randomUUID(),
       title: name,
-      status: 'uncompleted',
+      status: 'todo',
       priority: priority as PriorityLevel,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -39,6 +42,7 @@ function AddTaskButton() {
     }
 
     addTask(newTask)
+    onTaskAdded(newTask)
     console.log(tasks)
   }
 
@@ -51,7 +55,7 @@ function AddTaskButton() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
+        <Button variant="outline">Add task</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -87,7 +91,9 @@ function AddTaskButton() {
               Cancel
             </Button>
           </DialogClose>
-          <Button type="button" onClick={handleSubmit}>Save changes</Button>
+          <DialogClose asChild>
+            <Button type="button" onClick={handleSubmit}>Save changes</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
