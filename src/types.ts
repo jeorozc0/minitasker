@@ -1,5 +1,5 @@
 // Define the status and priority as separate types for reusability
-export type TaskStatus = 'uncompleted' | 'inProgress' | 'done'
+export type TaskStatus = 'todo' | 'in-progress' | 'done'
 export type PriorityLevel = 'low' | 'medium' | 'high'
 
 // Main Task interface
