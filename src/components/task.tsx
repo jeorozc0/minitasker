@@ -6,6 +6,7 @@ import {
 import { Task } from "@/types";
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
+import type { CSSProperties } from 'react';
 
 interface TaskCardProps {
   task: Task;
@@ -23,27 +24,26 @@ function TaskCard({ task }: TaskCardProps) {
     id: task.id
   });
 
-  const style = {
-    transform: CSS.Translate.toString(transform),
+  const style: CSSProperties = {
+    transform: transform ? CSS.Translate.toString(transform) : undefined,
     opacity: isDragging ? 0.5 : undefined,
-    position: isDragging ? 'relative' : undefined,
-    width: isDragging ? '100%' : undefined,
-    height: isDragging ? 'auto' : undefined,
+    cursor: 'grab',
   };
 
   return (
-    <Card
-      ref={setNodeRef}
-      style={style}
-      className={`w-full h-auto cursor-grab active:cursor-grabbing ${isDragging ? 'shadow-lg' : ''
-        }`}
-      {...listeners}
-      {...attributes}
-    >
-      <CardHeader className="p-4">
-        <CardTitle className="text-base">{task.title}</CardTitle>
-      </CardHeader>
-    </Card>
+    <div className="w-full touch-manipulation">
+      <Card
+        ref={setNodeRef}
+        style={style}
+        className="w-full h-auto"
+        {...listeners}
+        {...attributes}
+      >
+        <CardHeader className="p-4">
+          <CardTitle className="text-base">{task.title}</CardTitle>
+        </CardHeader>
+      </Card>
+    </div>
   );
 }
 
